@@ -1,0 +1,13 @@
+
+{
+"plan": [
+    {
+        "id": 1,
+        "week_num": 1,
+        "day_of_week": 0,
+        "exercise": "Run",
+        "distance": 3.5,
+        "completed": false
+    }
+]
+}

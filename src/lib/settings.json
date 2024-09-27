@@ -1,0 +1,11 @@
+{
+    "exercises": ["Run", "Rest", "Short Run", "Cross", "Long Run"],
+    "colors": [
+        {"run": "#00cf52" }, 
+        {"rest":"#0089e9"}, 
+        {"shortrun": "#9660e6"},
+        {"cross": "#ff8f3b"},
+        {"longrun": "#d6fe60"}
+    ],
+    "units": "km"
+}
