@@ -11,7 +11,7 @@
     import * as Select from "$lib/components/ui/select";
     import * as Table from "$lib/components/ui/table";
 
-    import { ArrowLeft } from "svelte-radix";
+    import { ArrowLeft, Pencil1, Cross2 } from "svelte-radix";
 
     let form_data = $state(structuredClone(initial_data));
     let loaded_id: number | undefined | null = $state(null);
@@ -21,21 +21,33 @@
     let value = $state([]);
     let selectedType = $state("");
 
-    let save = () => {
+    let save = async () => {
         let form = $state.snapshot(form_data);
+        // let days = $state.snapshot(value).map((i) => setDay(i));
         let days = $state.snapshot(value);
         let type = $state.snapshot(selectedType);
 
-        days.map(async (i) => {
-            await db.plan.add({
+        if (!loaded_id) {
+            for (const i in days) {
+                await db.plan.add({
+                    week_num: form.week_num,
+                    day_of_week: setDay(days[i]),
+                    distance: form.distance,
+                    exercise: type,
+                    completed: false
+                });
+            }
+        } else {
+            await db.plan.update(loaded_id, {
                 week_num: form.week_num,
-                day_of_week: setDay(i),
+                day_of_week: setDay(days),
                 distance: form.distance,
                 exercise: type,
                 completed: false
             });
-        });
+        }
 
+        reset_form();
         load_all_plans();
     };
 
@@ -156,18 +168,23 @@
                 <Table.Root class="mb-10">
                     <Table.Header>
                         <Table.Row>
-                            <Table.Head>Day</Table.Head>
-                            <Table.Head>Type</Table.Head>
-                            <Table.Head>Distance</Table.Head>
+                            <Table.Head class="w-[15%]">Day</Table.Head>
+                            <Table.Head class="w-[45%]">Type</Table.Head>
+                            <Table.Head class="w-[15%]">Distance</Table.Head>
+                            <Table.Head class="w-[25%]"></Table.Head>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
                         {#each all_plans as plans}
                             {#if plans.week_num === week}
-                                <Table.Row onclick={() => load_day(plans.id)}>
+                                <Table.Row>
                                     <Table.Cell>{getDay(plans.day_of_week)}</Table.Cell>
                                     <Table.Cell>{plans.exercise}</Table.Cell>
                                     <Table.Cell>{plans.distance}</Table.Cell>
+                                    <Table.Cell class="flex gap-2">
+                                        <Pencil1 class="cursor-pointer justify-self-end text-stone-700" size={18} onclick={() => load_day(plans.id)} />
+                                        <Cross2 class="cursor-pointer justify-self-end text-stone-700" size={18} onclick={() => delete_exercise(exercise.id)} />
+                                    </Table.Cell>
                                 </Table.Row>
                             {/if}
                         {/each}
